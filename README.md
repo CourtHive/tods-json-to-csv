@@ -27,8 +27,10 @@ const sourceDir = "./example";
 const targetDir = "./example";
 
 TODS2CSV({
+  /*
   organizationId, // optional - specify tournaments beloginging to a specific organization
   tournamentId, // optional - restrict to a single tournament
+  */
   sourceDir,
   targetDir,
 });

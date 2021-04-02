@@ -1,0 +1,47 @@
+{
+  "name": "wtn_tods",
+  "version": "1.0.0",
+  "description": "convert TODS.json into TODS.csv for WTN submission",
+  "keywords": [
+    "TODS",
+    "tournament",
+    "tournaments",
+    "competition",
+    "tennis"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CourtHive/tods-json-to-csv"
+  },
+  "homepage": "https://github.com/CourtHive/tods-json-to-csv",
+  "bugs": {
+    "url": "https://github.com/CourtHive/tods-json-to-csv",
+    "email": "support@CourtHive.com"
+  },
+  "main": "src/index.js",
+  "files": [
+    "dist"
+  ],
+  "np": {
+    "contents": "."
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "release": "np --no-tests",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsdx build",
+    "build": "tsdx build"
+  },
+  "author": "Charles Allen <charles@CourtHive.com> (CourtHive.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "tods-competition-factory": "^0.4.33"
+  },
+  "dependencies": {
+    "np": "^7.4.0",
+    "tsdx": "^0.14.1"
+  }
+}

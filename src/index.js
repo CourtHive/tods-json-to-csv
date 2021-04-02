@@ -2,22 +2,24 @@ import { tournamentEngine } from "tods-competition-factory";
 import fs from "fs";
 
 export function TODS2CSV({
-  count = 1,
-  organizationId,
-  path,
+  count,
+  sourceDir,
+  targetDir,
   tournamentId,
+  organizationId,
+  sourceExtnesion = ".tods.json",
 } = {}) {
-  if (!path || !organizationId) return { error: "Missing parameters" };
-
-  const orgPath = `${path}/${organizationId}`;
+  const sourcePath = sourceDir || ".";
+  const targetPath = targetDir || ".";
 
   const files = fs
-    .readdirSync(orgPath)
+    .readdirSync(sourcePath)
     .filter(
       (filename) =>
         filename.indexOf(".tods.json") > 0 &&
         filename.split(".").reverse()[0] === "json"
     );
+  count = count || files.length;
 
   if (tournamentId)
     files = files.filter((file) => file.indexOf(tournamentId) >= 0);
@@ -27,31 +29,44 @@ export function TODS2CSV({
   let totalErrors = 0;
 
   files.slice(0, count).forEach((file) => {
-    const tournamentRaw = fs.readFileSync(`${orgPath}/${file}`, "UTF8");
+    const tournamentRaw = fs.readFileSync(`${sourcePath}/${file}`, "UTF8");
     const tournamentRecord = JSON.parse(tournamentRaw);
-    tournamentEngine.setState(tournamentRecord);
-    try {
-      let { matchUps } = tournamentEngine.allTournamentMatchUps();
-      matchUps = matchUps.filter(
-        ({ matchUpStatus, matchUpType }) =>
-          ["COMPLETED", "RETIRED", "WALKOVER"].includes(matchUpStatus) &&
-          ["SINGLES", "DOUBLES"].includes(matchUpType)
-      );
-      totalMatchUps += matchUps.length;
-      matchUps.forEach((matchUp) => {
-        const result = createMatchUpCSV({ matchUp, tournamentRecord });
-        if (result.error) {
-          totalErrors += 1;
-        } else {
-          csvMatchUps.push(result.csvMatchUp);
-        }
-      });
-    } catch (err) {
-      console.log({ err });
+
+    if (!organizationId)
+      organizationId =
+        tournamentRecord.parentOrganisationId ||
+        tournamentRecord.unifiedTournamentId?.organisationId;
+
+    const currentOrganizationId =
+      tournamentRecord.parentOrganisationId ||
+      tournamentRecord.unifiedTournamentId?.organisationId;
+
+    if (organizationId && organizationId === currentOrganizationId) {
+      tournamentEngine.setState(tournamentRecord);
+      try {
+        let { matchUps } = tournamentEngine.allTournamentMatchUps();
+        console.log({ matchUps });
+        matchUps = matchUps.filter(
+          ({ matchUpStatus, matchUpType }) =>
+            ["COMPLETED", "RETIRED", "WALKOVER"].includes(matchUpStatus) &&
+            ["SINGLES", "DOUBLES"].includes(matchUpType)
+        );
+        totalMatchUps += matchUps.length;
+        matchUps.forEach((matchUp) => {
+          const result = createMatchUpCSV({ matchUp, tournamentRecord });
+          if (result.error) {
+            totalErrors += 1;
+          } else {
+            csvMatchUps.push(result.csvMatchUp);
+          }
+        });
+      } catch (err) {
+        console.log({ err });
+      }
     }
   });
 
-  if (csvMatchUps.length) {
+  if (organizationId && csvMatchUps.length) {
     const replacer = (_, value) => (value === null ? "" : value); // specify how you want to handle null values here
     const header = Object.keys(csvMatchUps[0]);
     const csv = [
@@ -62,7 +77,7 @@ export function TODS2CSV({
           .join(",")
       ),
     ].join("\r\n");
-    fs.writeFileSync(`${path}/${organizationId}.csv`, csv, "UTF-8");
+    fs.writeFileSync(`${targetPath}/${organizationId}.csv`, csv, "UTF-8");
   }
 
   console.log({ totalMatchUps, totalErrors });

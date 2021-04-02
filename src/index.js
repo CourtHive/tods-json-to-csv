@@ -7,8 +7,7 @@ export function TODS2CSV({
   path,
   tournamentId,
 } = {}) {
-  path = path || "/Users/charlesallen/Data/CourtHive/TODS_CONVERSIONS/";
-  organizationId = organizationId || "1e636811-ea0b-433b-ad23-97f100d8eab7";
+  if (!path || !organizationId) return { error: "Missing parameters" };
 
   const orgPath = `${path}/${organizationId}`;
 

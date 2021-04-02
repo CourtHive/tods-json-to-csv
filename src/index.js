@@ -45,7 +45,6 @@ export function TODS2CSV({
       tournamentEngine.setState(tournamentRecord);
       try {
         let { matchUps } = tournamentEngine.allTournamentMatchUps();
-        console.log({ matchUps });
         matchUps = matchUps.filter(
           ({ matchUpStatus, matchUpType }) =>
             ["COMPLETED", "RETIRED", "WALKOVER"].includes(matchUpStatus) &&

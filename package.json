@@ -1,6 +1,6 @@
 {
   "name": "wtn_tods",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "convert TODS.json into TODS.csv for WTN submission",
   "keywords": [
     "TODS",

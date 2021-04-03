@@ -18,7 +18,7 @@
     "url": "https://github.com/CourtHive/tods-json-to-csv",
     "email": "support@CourtHive.com"
   },
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],

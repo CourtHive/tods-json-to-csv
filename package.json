@@ -41,6 +41,7 @@
     "tods-competition-factory": "0.5.48"
   },
   "dependencies": {
+    "cli-progress": "^3.9.0",
     "np": "^7.4.0",
     "tsdx": "^0.14.1"
   }

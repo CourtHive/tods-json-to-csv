@@ -2885,7 +2885,7 @@ eslint@^6.1.0:
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
 
-esm@^3.2.25:
+esm@3.2.25:
   version "3.2.25"
   resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
   integrity sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==
@@ -6966,7 +6966,7 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tods-competition-factory@^0.4.33:
+tods-competition-factory@0.4.71:
   version "0.4.71"
   resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.4.71.tgz#4ba3ce7db0fa49d4846273287b71e20dab048920"
   integrity sha512-1FhXucVWr78jSPam+7pAt0ugLgdFUb/MFSyo7zxU2YW2Vo71rgG9pUPEJNXVhkvvmKgLgO+vsQn7WR18CHNOYA==

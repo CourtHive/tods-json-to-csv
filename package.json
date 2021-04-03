@@ -37,8 +37,8 @@
   "author": "Charles Allen <charles@CourtHive.com> (CourtHive.com)",
   "license": "MIT",
   "devDependencies": {
-    "esm": "^3.2.25",
-    "tods-competition-factory": "^0.4.33"
+    "esm": "3.2.25",
+    "tods-competition-factory": "0.4.71"
   },
   "dependencies": {
     "np": "^7.4.0",

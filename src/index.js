@@ -1,4 +1,5 @@
 import { tournamentEngine } from "tods-competition-factory";
+import { SingleBar, Presets } from "cli-progress";
 import fs from "fs";
 
 export function TODS2CSV({
@@ -28,14 +29,18 @@ export function TODS2CSV({
   let totalMatchUps = 0;
   let totalErrors = 0;
 
-  files.slice(0, count).forEach((file) => {
+  const progressBar = new SingleBar({}, Presets.shades_classic);
+  progressBar.start(count, 0);
+
+  files.slice(0, count).forEach((file, index) => {
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${file}`, "UTF8");
     const tournamentRecord = JSON.parse(tournamentRaw);
 
-    if (!organizationId)
+    if (!organizationId) {
       organizationId =
         tournamentRecord.parentOrganisationId ||
         tournamentRecord.unifiedTournamentId?.organisationId;
+    }
 
     const currentOrganizationId =
       tournamentRecord.parentOrganisationId ||
@@ -63,6 +68,8 @@ export function TODS2CSV({
         console.log({ err });
       }
     }
+
+    progressBar.update(index + 1);
   });
 
   if (organizationId && csvMatchUps.length) {
@@ -79,6 +86,7 @@ export function TODS2CSV({
     fs.writeFileSync(`${targetPath}/${organizationId}.csv`, csv, "UTF-8");
   }
 
+  progressBar.stop();
   console.log({ totalMatchUps, totalErrors });
 }
 
@@ -102,10 +110,10 @@ function createMatchUpCSV({ matchUp, tournamentRecord }) {
 
   const side1ParticipantsIds = singles
     ? [side1participant.participantId]
-    : side1participant.individualParticipantIds;
+    : side1participant.individualParticipantIds || [];
   const side2ParticipantsIds = singles
     ? [side2participant.participantId]
-    : side2participant.individualParticipantIds;
+    : side2participant.individualParticipantIds || [];
 
   const winningSide = matchUp.winningSide;
   const score =

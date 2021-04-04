@@ -16,7 +16,7 @@ yarn build
 
 ## Use
 
-`TODS2CSV` will write all matchUps extracted from all tournaments matching target organizatinId, or the first organizationId that is encountered
+`TODS2CSV` will write all matchUps extracted from all tournaments matching target organisatoinId, or the first organisationId that is encountered
 
 ```js
 // node -r esm
@@ -28,7 +28,7 @@ const targetDir = "./example";
 
 TODS2CSV({
   /*
-  organizationId, // optional - specify tournaments beloginging to a specific organization
+  organisationId, // optional - specify tournaments beloginging to a specific organisation
   tournamentId, // optional - restrict to a single tournament
   */
   sourceDir,

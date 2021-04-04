@@ -7,7 +7,7 @@ export function TODS2CSV({
   sourceDir,
   targetDir,
   tournamentId,
-  organizationId,
+  organisationId,
   sourceExtnesion = ".tods.json",
 } = {}) {
   const sourcePath = sourceDir || ".";
@@ -25,9 +25,9 @@ export function TODS2CSV({
   if (tournamentId)
     files = files.filter((file) => file.indexOf(tournamentId) >= 0);
 
+  const processingErrors = [];
   const csvMatchUps = [];
   let totalMatchUps = 0;
-  let totalErrors = 0;
 
   const progressBar = new SingleBar({}, Presets.shades_classic);
   progressBar.start(count, 0);
@@ -36,17 +36,17 @@ export function TODS2CSV({
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${file}`, "UTF8");
     const tournamentRecord = JSON.parse(tournamentRaw);
 
-    if (!organizationId) {
-      organizationId =
+    if (!organisationId) {
+      organisationId =
         tournamentRecord.parentOrganisationId ||
         tournamentRecord.unifiedTournamentId?.organisationId;
     }
 
-    const currentOrganizationId =
+    const currentOrganisationId =
       tournamentRecord.parentOrganisationId ||
       tournamentRecord.unifiedTournamentId?.organisationId;
 
-    if (organizationId && organizationId === currentOrganizationId) {
+    if (organisationId && organisationId === currentOrganisationId) {
       tournamentEngine.setState(tournamentRecord);
       try {
         let { matchUps } = tournamentEngine.allTournamentMatchUps();
@@ -59,7 +59,7 @@ export function TODS2CSV({
         matchUps.forEach((matchUp) => {
           const result = createMatchUpCSV({ matchUp, tournamentRecord });
           if (result.error) {
-            totalErrors += 1;
+            processingErrors.push({ result, matchUp });
           } else {
             csvMatchUps.push(result.csvMatchUp);
           }
@@ -72,7 +72,7 @@ export function TODS2CSV({
     progressBar.update(index + 1);
   });
 
-  if (organizationId && csvMatchUps.length) {
+  if (organisationId && csvMatchUps.length) {
     const replacer = (_, value) => (value === null ? "" : value); // specify how you want to handle null values here
     const header = Object.keys(csvMatchUps[0]);
     const csv = [
@@ -83,11 +83,24 @@ export function TODS2CSV({
           .join(",")
       ),
     ].join("\r\n");
-    fs.writeFileSync(`${targetPath}/${organizationId}.csv`, csv, "UTF-8");
+    fs.writeFileSync(`${targetPath}/${organisationId}.csv`, csv, "UTF-8");
+  }
+
+  if (processingErrors.length) {
+    fs.writeFileSync(
+      `${organisationId}.errors.json`,
+      JSON.stringify(processingErrors, undefined, 2),
+      "UTF-8"
+    );
   }
 
   progressBar.stop();
-  console.log({ totalMatchUps, totalErrors });
+
+  console.log({
+    exportedMatchUps: csvMatchUps.length,
+    totalErrors: processingErrors.length,
+    tournamentsProcessed: count,
+  });
 }
 
 function createMatchUpCSV({ matchUp, tournamentRecord }) {

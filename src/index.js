@@ -73,8 +73,12 @@ export function TODS2CSV({
 
         tournamentDetails.push({
           matchUpsCount: matchUps.length,
-          eventTypes: tournamentRecord.events?.map(
-            ({ eventType }) => eventType
+          eventTypes: tournamentRecord.events?.reduce(
+            (eventTypes, { eventType }) =>
+              eventTypes.includes(eventType)
+                ? eventTypes
+                : eventTypes.concat(eventType),
+            []
           ),
           tournamentName,
           filename,

@@ -13,28 +13,34 @@ export function TODS2CSV({
   const sourcePath = sourceDir || ".";
   const targetPath = targetDir || ".";
 
-  const files = fs
+  let filenames = fs
     .readdirSync(sourcePath)
     .filter(
       (filename) =>
         filename.indexOf(".tods.json") > 0 &&
         filename.split(".").reverse()[0] === "json"
     );
-  count = count || files.length;
+  count = count || filenames.length;
 
-  if (tournamentId)
-    files = files.filter((file) => file.indexOf(tournamentId) >= 0);
+  if (tournamentId) {
+    filenames = filenames.filter(
+      (filename) => filename.indexOf(tournamentId) >= 0
+    );
+    count = 1;
+  }
 
-  const processingErrors = [];
-  const csvMatchUps = [];
   let totalMatchUps = 0;
+  const csvMatchUps = [];
+  const tournamentDetails = [];
+  const processingErrors = [];
 
   const progressBar = new SingleBar({}, Presets.shades_classic);
   progressBar.start(count, 0);
 
-  files.slice(0, count).forEach((file, index) => {
-    const tournamentRaw = fs.readFileSync(`${sourcePath}/${file}`, "UTF8");
+  filenames.slice(0, count).forEach((filename, index) => {
+    const tournamentRaw = fs.readFileSync(`${sourcePath}/${filename}`, "UTF8");
     const tournamentRecord = JSON.parse(tournamentRaw);
+    const { tournamentName } = tournamentRecord;
 
     if (!organisationId) {
       organisationId =
@@ -64,6 +70,15 @@ export function TODS2CSV({
             csvMatchUps.push(result.csvMatchUp);
           }
         });
+
+        tournamentDetails.push({
+          matchUpsCount: matchUps.length,
+          eventTypes: tournamentRecord.events?.map(
+            ({ eventType }) => eventType
+          ),
+          tournamentName,
+          filename,
+        });
       } catch (err) {
         console.log({ err });
       }
@@ -90,6 +105,14 @@ export function TODS2CSV({
     fs.writeFileSync(
       `${organisationId}.errors.json`,
       JSON.stringify(processingErrors, undefined, 2),
+      "UTF-8"
+    );
+  }
+
+  if (tournamentDetails.length) {
+    fs.writeFileSync(
+      `${organisationId}.details.json`,
+      JSON.stringify(tournamentDetails, undefined, 2),
       "UTF-8"
     );
   }

@@ -1,6 +1,32 @@
-import { tournamentEngine } from "tods-competition-factory";
+import {
+  tournamentEngine,
+  matchUpStatusConstants,
+  matchUpTypes,
+} from "tods-competition-factory";
 import { SingleBar, Presets } from "cli-progress";
 import fs from "fs";
+
+const {
+  ABANDONED,
+  COMPLETED,
+  DEFAULTED,
+  DEAD_RUBBER,
+  DOUBLE_WALKOVER,
+  RETIRED,
+  WALKOVER,
+} = matchUpStatusConstants;
+
+const completedStatuses = [
+  ABANDONED,
+  COMPLETED,
+  DEFAULTED,
+  DEAD_RUBBER,
+  DOUBLE_WALKOVER,
+  RETIRED,
+  WALKOVER,
+];
+
+const { SINGLES, DOUBLES } = matchUpTypes;
 
 export function TODS2CSV({
   count,
@@ -57,12 +83,24 @@ export function TODS2CSV({
       tournamentEngine.setState(tournamentRecord);
       try {
         let { matchUps } = tournamentEngine.allTournamentMatchUps();
+
+        const incompleteMatchUpStatuses = matchUps
+          .filter(
+            ({ matchUpStatus }) => !completedStatuses.includes(matchUpStatus)
+          )
+          .reduce(
+            (u, { matchUpStatus }) =>
+              u.includes(matchUpStatus) ? u : u.concat(matchUpStatus),
+            []
+          );
+        if (disableProgress)
+          console.log("incomplete:", { incompleteMatchUpStatuses });
+
         matchUps = matchUps.filter(
           ({ matchUpStatus, matchUpType }) =>
-            ["COMPLETED", "RETIRED", "WALKOVER"].includes(matchUpStatus) &&
-            ["SINGLES", "DOUBLES"].includes(matchUpType)
+            completedStatuses.includes(matchUpStatus) &&
+            [SINGLES, DOUBLES].includes(matchUpType)
         );
-        console.log(matches.length, matchUps.length);
         totalMatchUps += matchUps.length;
         matchUps.forEach((matchUp) => {
           const result = createMatchUpCSV({ matchUp, tournamentRecord });

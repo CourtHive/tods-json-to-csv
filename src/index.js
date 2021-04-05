@@ -8,6 +8,7 @@ export function TODS2CSV({
   targetDir,
   tournamentId,
   organisationId,
+  disableProgress,
   sourceExtnesion = ".tods.json",
 } = {}) {
   const sourcePath = sourceDir || ".";
@@ -35,7 +36,7 @@ export function TODS2CSV({
   const processingErrors = [];
 
   const progressBar = new SingleBar({}, Presets.shades_classic);
-  progressBar.start(count, 0);
+  if (!disableProgress) progressBar.start(count, 0);
 
   filenames.slice(0, count).forEach((filename, index) => {
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${filename}`, "UTF8");
@@ -61,6 +62,7 @@ export function TODS2CSV({
             ["COMPLETED", "RETIRED", "WALKOVER"].includes(matchUpStatus) &&
             ["SINGLES", "DOUBLES"].includes(matchUpType)
         );
+        console.log(matches.length, matchUps.length);
         totalMatchUps += matchUps.length;
         matchUps.forEach((matchUp) => {
           const result = createMatchUpCSV({ matchUp, tournamentRecord });
@@ -88,7 +90,7 @@ export function TODS2CSV({
       }
     }
 
-    progressBar.update(index + 1);
+    if (!disableProgress) progressBar.update(index + 1);
   });
 
   if (organisationId && csvMatchUps.length) {
@@ -121,7 +123,7 @@ export function TODS2CSV({
     );
   }
 
-  progressBar.stop();
+  if (!disableProgress) progressBar.stop();
 
   console.log({
     exportedMatchUps: csvMatchUps.length,

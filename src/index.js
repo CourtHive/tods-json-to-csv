@@ -142,7 +142,11 @@ export function TODS2CSV({
           .join(",")
       ),
     ].join("\r\n");
-    fs.writeFileSync(`${targetPath}/${organisationId}.csv`, csv, "UTF-8");
+    fs.writeFileSync(
+      `${targetPath}/${organisationId}.matchUps.csv`,
+      csv,
+      "UTF-8"
+    );
   }
 
   if (processingErrors.length) {

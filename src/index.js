@@ -151,7 +151,7 @@ export function TODS2CSV({
 
   if (processingErrors.length) {
     fs.writeFileSync(
-      `${organisationId}.errors.json`,
+      `${targetPath}/${organisationId}.errors.json`,
       JSON.stringify(processingErrors, undefined, 2),
       "UTF-8"
     );
@@ -159,7 +159,7 @@ export function TODS2CSV({
 
   if (tournamentDetails.length) {
     fs.writeFileSync(
-      `${organisationId}.details.json`,
+      `${targetPath}/${organisationId}.details.json`,
       JSON.stringify(tournamentDetails, undefined, 2),
       "UTF-8"
     );

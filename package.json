@@ -38,7 +38,7 @@
   "license": "MIT",
   "devDependencies": {
     "esm": "3.2.25",
-    "tods-competition-factory": "0.5.48"
+    "tods-competition-factory": "0.5.62"
   },
   "dependencies": {
     "cli-progress": "^3.9.0",

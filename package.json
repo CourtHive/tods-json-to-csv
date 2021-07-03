@@ -1,6 +1,6 @@
 {
   "name": "tods-json-to-wtn-csv",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "convert TODS.json into TODS.csv for WTN submission",
   "keywords": [
     "TODS",

@@ -30,7 +30,6 @@
   },
   "scripts": {
     "release": "np --no-tests",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsdx build",
     "build": "tsdx build"
   },
@@ -38,7 +37,7 @@
   "license": "MIT",
   "devDependencies": {
     "esm": "3.2.25",
-    "tods-competition-factory": "0.7.4"
+    "tods-competition-factory": "0.63.1"
   },
   "dependencies": {
     "cli-progress": "^3.9.0",
